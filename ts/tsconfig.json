@@ -1,0 +1,20 @@
+{
+  "compilerOptions": {
+    "target": "ESNext",
+    "module": "CommonJS",
+    "lib": ["ESNext", "DOM"],
+    "strict": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
+    "baseUrl": ".",
+    "paths": {
+      "*": [
+        "src/*",
+        "../.venv/lib/python3.13/site-packages/bokeh/server/static/js/lib/*"
+      ]
+    },
+    "noEmit": true
+  },
+  "include": ["src/**/*"]
+}
