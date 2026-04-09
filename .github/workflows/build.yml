@@ -31,8 +31,6 @@ jobs:
 
       - name: Type Check (TypeScript)
         run: |
-          ls .venv
-          ls .venv/lib/python3.13/site-packages/bokeh/server/static/js/lib/
           cd ts
           bun i --verbose
           bun run tsc --version
