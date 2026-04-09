@@ -2,51 +2,53 @@ name: Build and Verify
 
 on:
   push:
-    branches: [ main, master ]
+    branches: [main, master]
   pull_request:
-    branches: [ main, master ]
+    branches: [main, master]
 
 jobs:
   build:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v6
+      - uses: actions/checkout@v6
 
-    - name: Install uv
-      run: |
-        curl -LsSf https://astral.sh/uv/install.sh | sh
-        echo "$HOME/.cargo/bin" >> $GITHUB_PATH
+      - name: Install uv
+        run: |
+          curl -LsSf https://astral.sh/uv/install.sh | sh
+          echo "$HOME/.cargo/bin" >> $GITHUB_PATH
 
-    - name: Set up Node.js
-      uses: actions/setup-node@v6
-      with:
-        node-version: '24'
+      - name: Set up Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: "24"
 
-    - name: Set up Bun
-      uses: oven-sh/setup-bun@v2
+      - name: Set up Bun
+        uses: oven-sh/setup-bun@v2
 
-    - name: Install Python dependencies
-      run: uv sync
+      - name: Install Python dependencies
+        run: uv sync
 
-    - name: Type Check (TypeScript)
-      run: |
-        cd ts
-        bun i --verbose
-        bun run tsc --version
-        bun run tsc --noEmit
+      - name: Type Check (TypeScript)
+        run: |
+          ls .venv
+          ls .venv/lib/python3.13/site-packages/bokeh/server/static/js/lib/
+          cd ts
+          bun i --verbose
+          bun run tsc --version
+          bun run tsc --noEmit
 
-    - name: Compile JS files
-      run: uv run python build_js.py
+      - name: Compile JS files
+        run: uv run python build_js.py
 
-    - name: Verify Repo Cleanliness
-      run: |
-        if [ -n "$(git status --porcelain src/bokeh_customizations/js/)" ]; then
-          echo "Error: Compiled JS files are out of sync with TS source!"
-          echo "Please run 'uv run python build_js.py' locally and commit the changes."
-          git diff src/bokeh_customizations/js/
-          exit 1
-        fi
+      - name: Verify Repo Cleanliness
+        run: |
+          if [ -n "$(git status --porcelain src/bokeh_customizations/js/)" ]; then
+            echo "Error: Compiled JS files are out of sync with TS source!"
+            echo "Please run 'uv run python build_js.py' locally and commit the changes."
+            git diff src/bokeh_customizations/js/
+            exit 1
+          fi
 
-    - name: Build Wheel
-      run: uv build
+      - name: Build Wheel
+        run: uv build
